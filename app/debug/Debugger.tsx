@@ -1,11 +1,23 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Leva } from 'leva';
-import { OrbitControls, Html } from '@react-three/drei';
-
+import { Leva, useControls } from 'leva';
+import {
+    OrbitControls,
+    Html,
+    PerformanceMonitor
+} from '@react-three/drei';
 
 export const Debugger = () => {
     const [debug, setDebug] = useState<boolean>(false);
+
+    const controls = useControls("Orbit Controls", {
+        OrbitControls: { value: true },
+        autoRotate: { value: true },
+        autoRotateSpeed: { value: 0.1, min: 0, max: 1, step: 0.01 },
+        enableZoom: { value: true },
+        minPolarAngle: { value: 0, min: 0, max: Math.PI, step: 0.01 },
+        maxPolarAngle: { value: Math.PI / 2.5, min: 0, max: Math.PI, step: 0.01 },
+    });
 
     useEffect(() => {
         const checkDebugHash = () => {
@@ -16,30 +28,52 @@ export const Debugger = () => {
             }
         };
 
-        // Check on initial load
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // cmd + d (Mac)
+            if (e.metaKey && e.key.toLowerCase() === 'd') {
+                e.preventDefault();
+
+                const isDebug = window.location.hash === '#debug';
+
+                if (isDebug) {
+                    window.location.hash = '';
+                    setDebug(false);
+                } else {
+                    window.location.hash = '#debug';
+                    setDebug(true);
+                }
+            }
+        };
+
+        // Initial check
         checkDebugHash();
 
-        // Listen for hash changes
+        // Listeners
         window.addEventListener('hashchange', checkDebugHash);
+        window.addEventListener('keydown', handleKeyDown);
 
         return () => {
             window.removeEventListener('hashchange', checkDebugHash);
+            window.removeEventListener('keydown', handleKeyDown);
         };
     }, []);
 
-    if(!debug) return null;
-    
+    if (!debug) return null;
+
     return (
         <>
-        <Html>
-        <Leva 
-            titleBar={{
-                title: 'Ryan The Developer',
-            }}
-         />
-         </Html>
-         <axesHelper args={[500]} />
-         <OrbitControls autoRotate autoRotateSpeed={0.1} enableZoom={true} minPolarAngle={0} maxPolarAngle={Math.PI / 2.5} />
-         </>
+            <Html>
+                <Leva
+                    titleBar={{
+                        title: 'Ryan The Developer',
+                    }}
+                />
+            </Html>
+
+            <axesHelper args={[500]} />
+
+            <OrbitControls />
+            <PerformanceMonitor />
+        </>
     );
-}
+};

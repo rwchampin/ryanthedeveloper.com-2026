@@ -4,6 +4,7 @@
  * @description Ultimate r3f camera component that supports multiple camera types (perspective, orthographic, orthographic) with helper utilities for camera manipulation and positioning.
  */
 
+
 import { useThree } from '@react-three/fiber'
 import { useControls } from 'leva'
 import { useEffect } from 'react'
@@ -73,7 +74,7 @@ export const calculateCameraDistance = (
 export const CoreCamera = ({
     type = 'perspective',
     position = [0, 0, 8] as Vector3Tuple,
-    fov = 35,
+    fov = 1,
     near = 0.1,
     far = 1000,
     zoom = 1,
