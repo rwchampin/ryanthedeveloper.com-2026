@@ -8,24 +8,24 @@
 import { useThree } from '@react-three/fiber'
 import { useControls } from 'leva'
 import { useEffect } from 'react'
-import type { Vector3Tuple } from 'three'
+
 
 export type CameraType = 'perspective' | 'orthographic'
 
 interface CoreCameraProps {
     type?: CameraType
-    position?: Vector3Tuple
+    position?: any
     fov?: number
     near?: number
     far?: number
     zoom?: number
-    lookAt?: Vector3Tuple
+    lookAt?: any
 }
 
 /**
  * Utility function to focus camera on a target
  */
-export const useCameraFocus = (target: Vector3Tuple | null, duration = 0.5) => {
+export const useCameraFocus = (target: any | null, duration = 0.5) => {
     const { camera } = useThree()
     
     useEffect(() => {
@@ -73,7 +73,7 @@ export const calculateCameraDistance = (
  */
 export const CoreCamera = ({
     type = 'perspective',
-    position = [0, 0, 8] as Vector3Tuple,
+    position = [0, 0, 8] as any,
     fov = 1,
     near = 0.1,
     far = 1000,
@@ -95,22 +95,22 @@ export const CoreCamera = ({
         lookAtZ: { value: lookAt ? lookAt[2] : 0, min: -100, max: 100, step: 0.1 },
     })
 
-    useEffect(() => {
-        camera.position.set(controls.positionX, controls.positionY, controls.positionZ)
-    }, [controls.positionX, controls.positionY, controls.positionZ, camera])
+    // useEffect(() => {
+    //     camera.position.set(controls.positionX, controls.positionY, controls.positionZ)
+    // }, [controls.positionX, controls.positionY, controls.positionZ, camera])
 
     useEffect(() => {
-        camera.fov = controls.fov
+        // camera.fov = controls.fov
         camera.near = controls.near
         camera.far = controls.far
         camera.zoom = controls.zoom
     }, [controls.fov, controls.near, controls.far, controls.zoom, camera])
 
-    useEffect(() => {
-        if (lookAt) {
-            camera.lookAt(controls.lookAtX, controls.lookAtY, controls.lookAtZ)
-        }
-    }, [lookAt, camera])
+    // useEffect(() => {
+    //     if (lookAt) {
+    //         camera.lookAt(controls.lookAtX, controls.lookAtY, controls.lookAtZ)
+    //     }
+    // }, [lookAt, camera])
 
     if (type === 'orthographic') {
         const width = window.innerWidth
@@ -118,7 +118,7 @@ export const CoreCamera = ({
         
         return (
             <orthographicCamera
-                makeDefault
+                // makeDefault
                 position={position}
                 zoom={zoom}
                 near={near}
@@ -133,7 +133,7 @@ export const CoreCamera = ({
 
     return (
         <perspectiveCamera
-            makeDefault
+            // makeDefault
             position={position}
             fov={fov}
             near={near}

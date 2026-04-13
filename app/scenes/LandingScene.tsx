@@ -1,9 +1,9 @@
 'use client'
-import { AccumulativeShadows, RandomizedLight, OrbitControls, Environment, useGLTF, useVideoTexture } from '@react-three/drei'
-import { EffectComposer, Bloom, HueSaturation, BrightnessContrast, TiltShift2, WaterEffect, ToneMapping } from '@react-three/postprocessing'
+// import { AccumulativeShadows, RandomizedLight, OrbitControls, Environment, useGLTF, useVideoTexture } from '@react-three/drei'
+// import { EffectComposer, Bloom, HueSaturation, BrightnessContrast, TiltShift2, WaterEffect, ToneMapping } from '@react-three/postprocessing'
 import { MagicLogo } from '../magic-logo/MagicLogo';
-import { useControls } from 'leva';
-import ParticleSwarm from './ParticleSwarm';
+// import { useControls } from 'leva';
+// import ParticleSwarm from './ParticleSwarm';
 
 export const LandingScene = () => {
     // const controls:any = useControls("Landing Scene", {
@@ -46,15 +46,15 @@ export const LandingScene = () => {
   );
 }
 
-function Postpro() {
-  return (
-    <EffectComposer disableNormalPass>
-      <HueSaturation saturation={-1} />
-      <BrightnessContrast brightness={0} contrast={0.25} />
-      <WaterEffect factor={0.75} />
-      <TiltShift2 samples={6} blur={0.5} />
-      <Bloom mipmapBlur luminanceThreshold={0} intensity={30} />
-      <ToneMapping />
-    </EffectComposer>
-  )
-}
+// function Postpro() {
+//   return (
+//     <EffectComposer disableNormalPass>
+//       <HueSaturation saturation={-1} />
+//       <BrightnessContrast brightness={0} contrast={0.25} />
+//       <WaterEffect factor={0.75} />
+//       <TiltShift2 samples={6} blur={0.5} />
+//       <Bloom mipmapBlur luminanceThreshold={0} intensity={30} />
+//       <ToneMapping />
+//     </EffectComposer>
+//   )
+// }

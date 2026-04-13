@@ -17,7 +17,7 @@ export const MagicLogo = ({
     // TODO: Update the use3dFile call to pass the key so the letters var 
     // is returned from the call without an entire new variable declaration
     const model = use3dFile(LOGO_URL);
-    
+
     // const model = useMemo(() => logoNode.clone(), [logoNode])
     
     // const letters = logoNode?.children;
@@ -52,7 +52,8 @@ export const MagicLogo = ({
 
         const vFov = (camera as THREE.PerspectiveCamera).fov * Math.PI / 180
         const heightAtDist = 2 * Math.tan(vFov / 2) * fitCameraDistance
-        const widthAtDist = heightAtDist * camera.aspect
+
+        const widthAtDist = heightAtDist * (camera as THREE.PerspectiveCamera).aspect
 
         const scale = Math.min(
             widthAtDist / sizeVec.x,
@@ -72,16 +73,16 @@ export const MagicLogo = ({
             <primitive object={model} />
         </group>
     )
-    return (
-        <group 
-            position={[controls.positionX, controls.positionY, controls.positionZ]}
-            rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
-            scale={controls.scale}
-        >
-            {letters && letters.map((letter:any, index:number) => (
-                <MagicLetter key={index} letter={letter} count={32} />
-            ))}
-        </group>
-    );
+    // return (
+    //     <group 
+    //         position={[controls.positionX, controls.positionY, controls.positionZ]}
+    //         rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
+    //         scale={controls.scale}
+    //     >
+    //         {letters && letters.map((letter:any, index:number) => (
+    //             <MagicLetter key={index} letter={letter} count={32} />
+    //         ))}
+    //     </group>
+    // );
 }
 

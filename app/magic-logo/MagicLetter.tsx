@@ -13,7 +13,8 @@ export const MagicLetter = ({ letter,count=500 }: { letter: any,count:number }) 
         <group {...letter}>
             <points receiveShadow castShadow>
                 <bufferGeometry>
-                    <bufferAttribute attach="attributes-position" count={sampledPoints.length} array={positions} itemSize={3} />
+                    {/* @ts-ignore */}
+                    <bufferAttribute args={null} attach="attributes-position" count={sampledPoints.length} array={positions} itemSize={3} />
                 </bufferGeometry>
                 <pointsMaterial size={0.015} color="#00ff00" />
             </points>
