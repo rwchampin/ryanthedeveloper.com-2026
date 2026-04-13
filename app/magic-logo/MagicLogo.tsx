@@ -17,6 +17,7 @@ export const MagicLogo = ({
     // TODO: Update the use3dFile call to pass the key so the letters var 
     // is returned from the call without an entire new variable declaration
     const model = use3dFile(LOGO_URL);
+    
     // const model = useMemo(() => logoNode.clone(), [logoNode])
     
     // const letters = logoNode?.children;
