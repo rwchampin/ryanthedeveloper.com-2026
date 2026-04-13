@@ -1,8 +1,8 @@
-    
+
 import { useRef } from 'react';
 import { useSurfaceSampler } from '../hooks/useSurfaceSampler';
 import { Points, Point } from '@react-three/drei';
-export const MagicLetter = ({ letter,count=500 }: { letter: any,count:number }) => {
+export const MagicLetter = ({ letter, count = 500 }: { letter: any, count: number }) => {
     const ref = useRef<any>(letter);
     // sample the mesh to get the vertices and use them to create a point cloud
     const sampledPoints = useSurfaceSampler(ref.current, count);
@@ -13,11 +13,16 @@ export const MagicLetter = ({ letter,count=500 }: { letter: any,count:number }) 
         <group {...letter}>
             <points receiveShadow castShadow>
                 <bufferGeometry>
-                    <bufferAttribute attach="attributes-position" count={sampledPoints.length} array={positions} itemSize={3} />
+                    <bufferAttribute
+                        args={[positions, 3]}
+                        attach="attributes-position"
+                        count={sampledPoints.length}
+                        array={positions} itemSize={3}
+                    />
                 </bufferGeometry>
                 <pointsMaterial size={0.015} color="#00ff00" />
             </points>
         </group>
     );
-    
+
 }

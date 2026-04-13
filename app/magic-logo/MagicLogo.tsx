@@ -13,7 +13,7 @@ export const MagicLogo = ({
     style="solid"
 }) => {
     const group = useRef<THREE.Group>(null)
-    const { camera, size } = useThree()
+    const { camera, size }:any = useThree()
     // TODO: Update the use3dFile call to pass the key so the letters var 
     // is returned from the call without an entire new variable declaration
     const model = use3dFile(LOGO_URL);
@@ -71,16 +71,16 @@ export const MagicLogo = ({
             <primitive object={model} />
         </group>
     )
-    return (
-        <group 
-            position={[controls.positionX, controls.positionY, controls.positionZ]}
-            rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
-            scale={controls.scale}
-        >
-            {letters && letters.map((letter:any, index:number) => (
-                <MagicLetter key={index} letter={letter} count={32} />
-            ))}
-        </group>
-    );
+    // return (
+    //     <group 
+    //         position={[controls.positionX, controls.positionY, controls.positionZ]}
+    //         rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
+    //         scale={controls.scale}
+    //     >
+    //         {letters && letters.map((letter:any, index:number) => (
+    //             <MagicLetter key={index} letter={letter} count={32} />
+    //         ))}
+    //     </group>
+    // );
 }
 

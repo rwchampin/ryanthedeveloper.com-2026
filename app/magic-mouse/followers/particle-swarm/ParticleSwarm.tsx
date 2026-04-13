@@ -71,13 +71,16 @@ export const ParticleSwarm = ({
 
     useFrame(({ clock }) => {
         updateGlobalOrbitPositions(orbitData, positions, clock.getElapsedTime());
-        points.current.geometry.attributes.position.needsUpdate = true;
+        if (points.current){
+            points.current.geometry.attributes.position.needsUpdate = true;
+        }
     });
     
     return (
         <points ref={points}>
             <bufferGeometry>
                 <bufferAttribute
+                    args={[positions, 3]}
                     attach="attributes-position"
                     count={positions.length / 3}
                     array={positions}

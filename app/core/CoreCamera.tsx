@@ -100,7 +100,8 @@ export const CoreCamera = ({
     }, [controls.positionX, controls.positionY, controls.positionZ, camera])
 
     useEffect(() => {
-        camera.fov = controls.fov
+        // ts-ignore
+        // camera.fov as
         camera.near = controls.near
         camera.far = controls.far
         camera.zoom = controls.zoom
@@ -118,7 +119,7 @@ export const CoreCamera = ({
         
         return (
             <orthographicCamera
-                makeDefault
+                // makeDefault
                 position={position}
                 zoom={zoom}
                 near={near}
@@ -133,7 +134,7 @@ export const CoreCamera = ({
 
     return (
         <perspectiveCamera
-            makeDefault
+            // makeDefault
             position={position}
             fov={fov}
             near={near}
