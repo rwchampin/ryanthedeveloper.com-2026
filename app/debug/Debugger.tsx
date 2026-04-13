@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Leva, useControls } from 'leva';
+import {  useControls } from 'leva';
 import {
     OrbitControls,
     Html,
@@ -10,14 +10,14 @@ import {
 export const Debugger = () => {
     const [debug, setDebug] = useState<boolean>(false);
     
-    const controls = useControls("Orbit Controls", {
-        OrbitControls: { value: true },
-        autoRotate: { value: true },
-        autoRotateSpeed: { value: 0.1, min: 0, max: 1, step: 0.01 },
-        enableZoom: { value: true },
-        minPolarAngle: { value: 0, min: 0, max: Math.PI, step: 0.01 },
-        maxPolarAngle: { value: Math.PI / 2.5, min: 0, max: Math.PI, step: 0.01 },
-    });
+    // const controls = useControls("Orbit Controls", {
+    //     OrbitControls: { value: true },
+    //     autoRotate: { value: true },
+    //     autoRotateSpeed: { value: 0.1, min: 0, max: 1, step: 0.01 },
+    //     enableZoom: { value: true },
+    //     minPolarAngle: { value: 0, min: 0, max: Math.PI, step: 0.01 },
+    //     maxPolarAngle: { value: Math.PI / 2.5, min: 0, max: Math.PI, step: 0.01 },
+    // });
 
     useEffect(() => {
         const checkDebugHash = () => {
@@ -62,13 +62,8 @@ export const Debugger = () => {
 
     return (
         <>
-            <Html>
-                <Leva
-                    titleBar={{
-                        title: 'Ryan The Developer',
-                    }}
-                />
-            </Html>
+            
+               
 
             <axesHelper args={[500]} />
 
