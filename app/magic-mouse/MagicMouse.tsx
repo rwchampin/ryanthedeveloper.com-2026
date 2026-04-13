@@ -12,7 +12,7 @@ import { useControls } from 'leva';
 export default function MagicMouse() {
   const sphereRef = useRef<THREE.Mesh>(null);
   const mousePos = useRef({ x: 0, y: 0 });
-
+  
   const swarmControls = useControls("Swarm", {
     radius: { value: 0.025, min: 0.01, max: 0.1, step: 0.005 },
     count: { value: 124, min: 10, max: 500, step: 1 },

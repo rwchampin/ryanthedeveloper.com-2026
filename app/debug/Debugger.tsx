@@ -9,7 +9,7 @@ import {
 
 export const Debugger = () => {
     const [debug, setDebug] = useState<boolean>(false);
-
+    
     const controls = useControls("Orbit Controls", {
         OrbitControls: { value: true },
         autoRotate: { value: true },
