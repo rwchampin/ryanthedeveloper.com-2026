@@ -1,9 +1,9 @@
 'use client'
 import { AccumulativeShadows, RandomizedLight, OrbitControls, Environment, useGLTF, useVideoTexture, SpotLight } from '@react-three/drei'
-import { EffectComposer, Bloom, HueSaturation, BrightnessContrast, TiltShift2, WaterEffect, ToneMapping } from '@react-three/postprocessing'
-import { MagicLogo } from '../magic-logo/MagicLogo';
+// import { EffectComposer, Bloom, HueSaturation, BrightnessContrast, TiltShift2, WaterEffect, ToneMapping } from '@react-three/postprocessing'
+// import { MagicLogo } from '../magic-logo/MagicLogo';
 import { useControls, folder } from 'leva';
-import { SandFloor } from '../sand/SandFloor';
+// import { SandFloor } from '../sand/SandFloor';
 import { SolidLogo } from '../magic-logo/SolidLogo';
 // import ParticleSwarm from './ParticleSwarm';
 
