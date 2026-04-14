@@ -1,86 +1,186 @@
-import { useControls } from 'leva';
-import {
-    use3dFile
-} from '../hooks/use3dFile';
-import { MagicLetter } from './MagicLetter';
-import { useThree } from '@react-three/fiber';
-import { useEffect, useMemo, useRef } from 'react';
+'use client';
+
 import * as THREE from 'three';
+import { useMemo, useRef } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 
-const LOGO_URL = '/3d/official-logo.glb';
+const SIZE = 256;
 
-export const MagicLogo = ({
-    style="solid"
-}) => {
-    const group = useRef<THREE.Group>(null)
-    const { camera, size }:any = useThree()
-    // TODO: Update the use3dFile call to pass the key so the letters var 
-    // is returned from the call without an entire new variable declaration
-    const model = use3dFile(LOGO_URL);
-    // const model = useMemo(() => logoNode.clone(), [logoNode])
-    
-    // const letters = logoNode?.children;
+export function MagicLogo() {
+    const meshRef = useRef<THREE.Mesh>(null);
 
-    const controls = useControls("Magic Logo", {
-        positionX: { value: 0, min: -10, max: 10, step: 0.1 },
-        positionY: { value: 0, min: -10, max: 10, step: 0.1 },
-        positionZ: { value: 0, min: -10, max: 10, step: 0.1 },
-        rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
-        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01 },
-        rotationZ: { value: .250, min: -Math.PI, max: Math.PI, step: 0.01 },
-        scale: { value: 5.5, min: 0.1, max: 5, step: 0.1 },
+    const { gl, camera } = useThree();
+
+    /**
+     * 🧠 RENDER TARGETS (MUTABLE - FIXED)
+     */
+    const rtA = useRef(
+        new THREE.WebGLRenderTarget(SIZE, SIZE, {
+            format: THREE.RGFormat,
+            type: THREE.FloatType,
+        })
+    );
+
+    const rtB = useRef(rtA.current.clone());
+
+    /**
+     * 🔁 SIMULATION PLANE (REUSED — NOT CREATED IN LOOP)
+     */
+    const simScene = useMemo(() => new THREE.Scene(), []);
+    const simCamera = useMemo(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
+
+    const simPlane = useMemo(() => {
+        const mat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTexture: { value: null },
+                uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+                uForce: { value: 0 },
+                uTime: { value: 0 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                precision highp float;
+
+                uniform sampler2D uTexture;
+                uniform vec2 uMouse;
+                uniform float uForce;
+                uniform float uTime;
+
+                varying vec2 vUv;
+
+                void main() {
+
+                    vec4 data = texture2D(uTexture, vUv);
+
+                    float height = data.r;
+                    float velocity = data.g;
+
+                    float dist = distance(vUv, uMouse);
+
+                    float impact = exp(-dist * 30.0) * uForce;
+
+                    // IMPULSE (NOT RADIAL BULGE)
+                    velocity += impact * 0.03;
+
+                    // spring back to flat
+                    velocity += -height * 0.02;
+
+                    // damping
+                    velocity *= 0.92;
+
+                    height += velocity;
+
+                    gl_FragColor = vec4(height, velocity, 0.0, 1.0);
+                }
+            `,
+        });
+
+        const plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+        simScene.add(plane);
+
+        return plane;
+    }, [simScene]);
+
+    /**
+     * 🌑 RENDER MATERIAL (DISPLAY SAND)
+     */
+    const renderMaterial = useMemo(() => {
+        return new THREE.ShaderMaterial({
+            uniforms: {
+                uHeightMap: { value: null },
+            },
+            vertexShader: `
+                uniform sampler2D uHeightMap;
+                varying vec2 vUv;
+
+                void main() {
+                    vUv = uv;
+
+                    vec3 pos = position;
+
+                    float h = texture2D(uHeightMap, uv).r;
+
+                    pos.y += h * 1.5;
+
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                precision highp float;
+
+                varying vec2 vUv;
+
+                void main() {
+
+                    float base = 0.03;
+
+                    // subtle gradient sand depth
+                    vec3 color = vec3(base);
+
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `,
+        });
+    }, []);
+
+    /**
+     * 🧲 MOUSE STATE
+     */
+    const mouse = useRef(new THREE.Vector2(0.5, 0.5));
+    const force = useRef(0);
+
+    /**
+     * 🔁 FRAME LOOP
+     */
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+
+        /**
+         * 🌐 mouse → UV
+         */
+        mouse.current.x = (state.pointer.x + 1) * 0.5;
+        mouse.current.y = (state.pointer.y + 1) * 0.5;
+
+        force.current = THREE.MathUtils.lerp(force.current, 1, 0.1);
+        force.current *= 0.92;
+
+        /**
+         * 🧠 SIM UPDATE
+         */
+        const mat = simPlane.material as THREE.ShaderMaterial;
+
+        mat.uniforms.uTexture.value = rtA.current.texture;
+        mat.uniforms.uMouse.value = mouse.current;
+        mat.uniforms.uForce.value = force.current;
+        mat.uniforms.uTime.value = t;
+
+        gl.setRenderTarget(rtB.current);
+        gl.render(simScene, simCamera);
+        gl.setRenderTarget(null);
+
+        /**
+         * 🔁 SWAP (FIXED - MUTABLE REFS)
+         */
+        const temp = rtA.current;
+        rtA.current = rtB.current;
+        rtB.current = temp;
+
+        /**
+         * 🌑 APPLY TO RENDER
+         */
+        renderMaterial.uniforms.uHeightMap.value = rtA.current.texture;
     });
 
-    useEffect(() => {
-        if (!group.current) return
-
-        const box = new THREE.Box3().setFromObject(model)
-        const sizeVec = new THREE.Vector3()
-        const center = new THREE.Vector3()
-
-        box.getSize(sizeVec)
-        box.getCenter(center)
-
-        // Center the model
-        model.position.x -= center.x
-        model.position.y -= center.y
-        model.position.z -= center.z
-
-        // Fit to camera
-        const fitCameraDistance = (camera as THREE.PerspectiveCamera).position.z
-
-        const vFov = (camera as THREE.PerspectiveCamera).fov * Math.PI / 180
-        const heightAtDist = 2 * Math.tan(vFov / 2) * fitCameraDistance
-        const widthAtDist = heightAtDist * camera.aspect
-
-        const scale = Math.min(
-            widthAtDist / sizeVec.x,
-            heightAtDist / sizeVec.y
-        )
-
-        group.current.scale.setScalar(scale * 0.9) // padding factor
-    }, [camera, model, size])
-
     return (
-        <group 
-            ref={group}
-            position={[controls.positionX, controls.positionY, controls.positionZ]}
-            rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
-            // scale={controls.scale}
-        >
-            <primitive object={model} />
-        </group>
-    )
-    // return (
-    //     <group 
-    //         position={[controls.positionX, controls.positionY, controls.positionZ]}
-    //         rotation={[controls.rotationX, controls.rotationY, controls.rotationZ]}
-    //         scale={controls.scale}
-    //     >
-    //         {letters && letters.map((letter:any, index:number) => (
-    //             <MagicLetter key={index} letter={letter} count={32} />
-    //         ))}
-    //     </group>
-    // );
+        <mesh ref={meshRef} rotation-x={-Math.PI / 2}>
+            <planeGeometry args={[10, 10, 256, 256]} />
+            <primitive object={renderMaterial} attach="material" />
+        </mesh>
+    );
 }
-
