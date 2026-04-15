@@ -29,7 +29,7 @@ export const LandingScene = () => {
 
   return (
     <>
-    <color attach="background" args={['#cac4c4']} />
+    <color attach="background" args={['#353131']} />
       {/* <fog attach="fog" args={['#353535', 5, 20]} /> */}
       {/* <SandFloor /> */}
 

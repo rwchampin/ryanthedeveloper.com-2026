@@ -18,7 +18,7 @@ export const CoreCanvas = ({ children }: { children: React.ReactNode }) => {
       style={{ height: '100vh', width: '100vw' }}>
       {children}
       {/* <CoreCamera type="perspective" position={[0, 0, 0]}  near={0.1} far={1000} /> */}
-      {/* <MagicMouse /> */}
+      <MagicMouse />
       <Debugger />
     </Canvas>
   )
